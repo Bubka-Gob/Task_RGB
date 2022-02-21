@@ -1,21 +1,11 @@
 
 class Structure:
-    __colors = [[0 for x in range(15)] for y in range(10)]
-    __connections = [list(range(15*y, 15*y+15)) for y in range(10)]
+    __colors = []
+    __connections = []
 
-    def fill(self, rgb_list):
-        colors_y = 0
-        for y in rgb_list:
-            colors_x = 0
-            for x in y:
-                if x == 'R':
-                    self.__colors[colors_y][colors_x] = 1
-                if x == 'G':
-                    self.__colors[colors_y][colors_x] = 2
-                if x == 'B':
-                    self.__colors[colors_y][colors_x] = 3
-                colors_x += 1
-            colors_y += 1
+    def __init__(self, rgb_list):
+        self.__colors = rgb_list
+        self.create_connections()
 
     def create_connections(self):
         self.__connections = [list(range(15 * y, 15 * y + 15)) for y in range(10)]
@@ -50,10 +40,15 @@ class Structure:
                     temp_x -= 1
 
     def remove(self, y_picked, x_picked):
+        if y_picked < 0 or y_picked > 9 or x_picked < 0 or x_picked > 14:
+            print(f"Invalid move at {x_picked} {y_picked}")
+            return -1, -1
         cluster_number = self.__connections[y_picked][x_picked]
         if not self.is_valid_cluster(cluster_number):
-            return 0
+            print(f"Invalid move at {x_picked} {y_picked}")
+            return -1, -1
         counter = 0
+        color = self.__colors[y_picked][x_picked]
         for y in range(10):
             for x in range(15):
                 if self.__connections[y][x] == cluster_number:
@@ -62,7 +57,7 @@ class Structure:
         self.__shift_down()
         self.__shift_left()
         self.create_connections()
-        return counter
+        return counter, color
 
     def is_valid_cluster(self, cluster_number):
         counter = 0
@@ -86,12 +81,26 @@ class Structure:
             self.__colors[y][column_number-1] = self.__colors[y][column_number]
             self.__colors[y][column_number] = 0
 
-    def biggest_cluster(self):
+    def get_biggest_cluster(self):
         flat_list = [el for sublist in self.__connections for el in sublist]
         cluster = max(flat_list, key=flat_list.count)
         if not self.is_valid_cluster(cluster):
             return None
-        index = flat_list.index(cluster)
+        return cluster
+
+    def is_empty_field(self):
+        for y in self.__colors:
+            for x in y:
+                if y != 0:
+                    return False
+        return True
+
+    def get_cluster_number(self, y, x):
+        return self.__connections[y][x]
+
+    def get_cluster_axis(self, cluster_number):
+        flat_list = [el for sublist in self.__connections for el in sublist]
+        index = flat_list.index(cluster_number)
         y = index // 15
         x = index % 15
         return y, x
