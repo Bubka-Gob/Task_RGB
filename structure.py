@@ -84,21 +84,20 @@ class Structure:
     def get_biggest_cluster(self):
         flat_list = [el for sublist in self.__connections for el in sublist]
         cluster = max(flat_list, key=flat_list.count)
-        if not self.is_valid_cluster(cluster):
-            return None
         return cluster
 
-    def is_empty_field(self):
+    def get_remaining_balls(self):
+        counter = 0
         for y in self.__colors:
             for x in y:
-                if y != 0:
-                    return False
-        return True
+                if not isinstance(x, int):
+                    counter += 1
+        return counter
 
     def get_cluster_number(self, y, x):
         return self.__connections[y][x]
 
-    def get_cluster_axis(self, cluster_number):
+    def get_cluster_axes(self, cluster_number):
         flat_list = [el for sublist in self.__connections for el in sublist]
         index = flat_list.index(cluster_number)
         y = index // 15

@@ -31,13 +31,12 @@ if __name__ == '__main__':
             balls_count = result[0]
             color = result[1]
             current_score = (balls_count - 2) ** 2
-            if structure.is_empty_field():
-                score += 1000
             score += current_score
             print(f'Move {move_count} at ({x}, {y}): removed {balls_count} balls of color {color}, got {current_score} points')
         if not structure.is_valid_cluster(structure.get_biggest_cluster()):
             structure.show_colors()
-            if structure.is_empty_field():
+            remaining = structure.get_remaining_balls()
+            if remaining == 0:
                 score += 1000
             is_continuing = False
             print(f'Game finished with score {score}')
