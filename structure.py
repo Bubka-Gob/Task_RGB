@@ -1,13 +1,13 @@
 
 class Structure:
-    __colors = []
-    __connections = []
+    __colors = []  # stores 2d array with information about colors
+    __connections = []  # stores 2d array with info about connected points
 
     def __init__(self, rgb_list):
         self.__colors = rgb_list
         self.create_connections()
 
-    def create_connections(self):
+    def create_connections(self):  # calculate connected clusters
         self.__connections = [list(range(15 * y, 15 * y + 15)) for y in range(10)]
         for y in range(10):
             for x in range(15):
@@ -39,7 +39,7 @@ class Structure:
                         self.__move_column_left(temp_x)
                     temp_x -= 1
 
-    def remove(self, y_picked, x_picked):
+    def remove(self, y_picked, x_picked):  # remove cluster if it's valid, shift balls and create new connections tree
         if y_picked < 0 or y_picked > 9 or x_picked < 0 or x_picked > 14:
             print(f"Invalid move at {x_picked} {y_picked}")
             return -1, -1
@@ -97,7 +97,7 @@ class Structure:
     def get_cluster_number(self, y, x):
         return self.__connections[y][x]
 
-    def get_cluster_axes(self, cluster_number):
+    def get_cluster_axes(self, cluster_number):  # returns axes of one ball of the cluster
         flat_list = [el for sublist in self.__connections for el in sublist]
         index = flat_list.index(cluster_number)
         y = index // 15
